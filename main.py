@@ -24,13 +24,23 @@ import os
 COUNT = "241"
 
 
-def main() -> None:
-    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
-    os.makedirs(out_dir, exist_ok=True)
-    path = os.path.join(out_dir, "entry.txt")
+def write_count(path: str) -> None:
     # newline="" and a bare digit string keep the file digits-only.
     with open(path, "w", encoding="utf-8", newline="") as fh:
         fh.write(COUNT)
+    # Self-check: the gate accepts 1 to 5 characters, digits only, so
+    # prove the file on disk is exactly the count before exiting.
+    with open(path, "rb") as fh:
+        data = fh.read()
+    assert data == COUNT.encode("utf-8") and data.isdigit(), (
+        f"entry.txt must be digits only, got {data!r}"
+    )
+
+
+def main() -> None:
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
+    os.makedirs(out_dir, exist_ok=True)
+    write_count(os.path.join(out_dir, "entry.txt"))
 
 
 if __name__ == "__main__":
